@@ -17,12 +17,9 @@ Userroute.get("/get/:page" , async(req,res)=>{
     // Calculate the offset based on the page number and page size
     const offset = (pageNumber - 1) * pageSize; 
     try {
-        let users = await Users.findAll({ limit : pageSize , offset: offset});
-        if(users.length !== 0){
-            res.status(200).json(users);
-        }else{
-            res.status(400).json({message : "No users found"});
-        }
+        let { count, rows } = await Users.findAndCountAll({ limit : pageSize , offset: offset});
+            res.status(200).json({ count, rows });
+        
     } catch (error) {
         // console.log(error)
         res.status(500).json({message : "Something went wrong with the route"});
@@ -52,16 +49,28 @@ Userroute.get("/get/filter/:state_code/:district_code/:assimbly_code/:page" , as
         }
     
         // Use the whereConditions directly in the query
-        const result = await Users.findAll({
+        const { count, rows } = await Users.findAndCountAll({
           where: whereConditions,
           offset: (page - 1) * limit,
           limit: limit,
         });
-        res.status(200).json(result);
+        res.status(200).json({ count, rows });
         
     } catch (error) {
         res.status(400).send(error);
     }
 });
+
+
+Userroute.get("/getrecordscount" , async (req,res) => {
+    try {
+        
+        const totalCount = await Users.count();
+        res.status(200).json({ totalCount });
+
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
 
 module.exports = { Userroute }       
