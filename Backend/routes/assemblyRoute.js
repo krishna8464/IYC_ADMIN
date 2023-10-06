@@ -20,6 +20,22 @@ Assemblyroute.get("/get", async(req,res)=>{
 
         res.status(500).json({message : error});
     }
+});
+
+Assemblyroute.get("/getdistrictassembly/:statecode/:districtcode" , async (req,res) => {
+    const statecode = req.params["statecode"];
+    const districtcode = req.params["districtcode"]
+    try {
+        const assembly = await Assembly.findAll({
+            where: {
+                MASTER_STATE_CODE: statecode, 
+                DISTRICT_CODE : districtcode
+            },
+          });
+          res.status(200).send(assembly)
+    } catch (error) {
+        res.status(500).json({message : error});
+    }
 })
 
 module.exports={Assemblyroute}

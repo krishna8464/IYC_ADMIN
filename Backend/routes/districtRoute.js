@@ -16,8 +16,22 @@ Districtroute.get("/get", async(req,res)=>{
         const states = await District.findAll();
         res.status(200).send(states)
     } catch (error) {
-        console.log(error)
+        // console.log(error)
 
+        res.status(500).json({message : error});
+    }
+});
+
+Districtroute.get("/getstatedistrict/:statecode" , async (req,res) => {
+    const statecode = req.params["statecode"]
+    try {
+        const districts = await District.findAll({
+            where: {
+                MASTER_STATE_CODE: statecode, 
+            },
+          });
+          res.status(200).send(districts)
+    } catch (error) {
         res.status(500).json({message : error});
     }
 })
